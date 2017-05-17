@@ -5,6 +5,7 @@
  */
 package beans;
 
+import entities.PotentialOwner;
 import entities.ProcessDefinition;
 import entities.ProcessInstance;
 import entities.TaskSummary;
@@ -32,5 +33,7 @@ public interface RemoteAPI {
     int startProcess(User user,ProcessDefinition processDef,String param);
     int abortProcess(User user,ProcessInstance processInstance);
     void send(String to, String sub, String msg); 
+    PotentialOwner getPotentialOwner(String taskId);
+    List<TaskSummary> getAllTasks();
 }
 

@@ -17,7 +17,9 @@ import entities.User;
 public interface UserRemote {
     void addUser(User u);
     User findUser(Long id);
+    List<User> getUsers();
     User checkUser(String login, String password);
     void removeUser(User u);
     void updateUser(User u);
+    User getUserByLogin(String login);
 }

@@ -48,7 +48,7 @@
                    <td><%=task.getDescription()%></td>
                    <td><%=task.getProcessInstance().getProcessName()%></td>
                    <td><%=task.getProcessInstance().getIdentity()%></td>
-                   <td> <a href="task?act=claim&id=<%=task.getTaskId()%>">Claim</a></td>
+                   <td> <a href="task?act=claim&id=<%=task.getTaskId()%>&login=<%=task.getProcessInstance().getIdentity() %>">Claim</a></td>
                </tr>    
        
         <% }%>
@@ -78,7 +78,7 @@
                    <td><%=task.getDescription()%></td>
                    <td><%=task.getProcessInstance().getProcessName() %> </td>
                    <td><%=task.getProcessInstance().getIdentity() %></td>
-                   <td> <a href="task?act=start&id=<%=task.getTaskId() %> ">Start</a></td>
+                   <td> <a href="task?act=start&id=<%=task.getTaskId() %>&login=<%=task.getProcessInstance().getIdentity() %> ">Start</a></td>
                    
                </tr>    
         
@@ -112,7 +112,7 @@
                    <td><%=task.getDescription()%></td>
                    <td><%=task.getProcessInstance().getProcessName() %> </td>
                    <td><%=task.getProcessInstance().getIdentity() %></td>
-                   <td> <a href="task?act=complete&id=<%=task.getTaskId() %> ">Complete</a></td>
+                   <td> <a href="task?act=complete&id=<%=task.getTaskId() %>&login=<%=task.getProcessInstance().getIdentity() %> ">Complete</a></td>
                    
                </tr>    
         

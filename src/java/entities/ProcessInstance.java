@@ -40,6 +40,7 @@ public class ProcessInstance {
     public void setDuration(long duration) {
         this.duration = duration;
     }
+
     public String getId() {
         return Id;
     }
@@ -47,6 +48,7 @@ public class ProcessInstance {
     public void setId(String Id) {
         this.Id = Id;
     }
+    
 
     public String getProcessId() {
         return processId;

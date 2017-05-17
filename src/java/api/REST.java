@@ -10,6 +10,9 @@ package api;
  * @author fatpenguino
  */
 import beans.RemoteAPI;
+import beans.SendMailPO;
+import beans.UserCRUD;
+import entities.PotentialOwner;
 import entities.ProcessDefinition;
 import entities.ProcessInstance;
 import entities.TaskSummary;
@@ -24,6 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,28 +53,17 @@ import org.xml.sax.InputSource;
 import java.util.Properties;    
 import javax.mail.*;    
 import javax.mail.internet.*; 
+import org.w3c.dom.DOMException;
 @Stateless(mappedName = "rest")
 public class REST implements RemoteAPI {
 
     public static void main(String[] args) throws Exception {
-		// start a new process instance
-		//send("17350@iitu.kz", "beibut rak", "lol kek cheburek");
-                URL url = new URL("http://localhost:8080/jbpm-console/rest/runtime/org.jbpm:Evaluation:1.0/process/evaluation/start?map_employee=krisv&map_reason=Need%20a%20raise");
-		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-		// System.out.println(format(response));
-		url = new URL("http://localhost:8080/jbpm-console/rest/task/" + 1 + "/complete?map_performance=acceptable");
-		conn = (HttpURLConnection) url.openConnection();
-		conn.setRequestMethod("POST");
-		conn.setRequestProperty("Authorization", "Basic " + Base64Util.encode("mary:mary"));
-		String response = new BufferedReader(new InputStreamReader((conn.getInputStream()))).readLine();
-		// System.out.println(format(response));
-
-		System.out.println("Process instance completed");
-	}
+    
+    }
 	
     @Override
     public  List<TaskSummary> getPotentialTasks(User user){
-        List<TaskSummary> tasks=new ArrayList<TaskSummary>();
+        List<TaskSummary> tasks=new ArrayList<>();
         URL url;
         Document doc = null;
         try {
@@ -84,10 +77,13 @@ public class REST implements RemoteAPI {
         }
         catch (MalformedURLException ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return tasks;
         } catch (IOException ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return tasks;
         } catch (Exception ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return tasks;
         }
         NodeList nList = doc.getElementsByTagName("task-summary");
 	for (int i=0; i<nList.getLength(); i++){
@@ -116,7 +112,7 @@ public class REST implements RemoteAPI {
     
     @Override
     public  List<TaskSummary> getTasks(User user) {
-        List<TaskSummary> tasks=new ArrayList<TaskSummary>();
+        List<TaskSummary> tasks=new ArrayList<>();
         URL url;
         Document doc = null;
         try {
@@ -130,10 +126,13 @@ public class REST implements RemoteAPI {
         }
         catch (MalformedURLException ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return tasks;
         } catch (IOException ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return tasks;
         } catch (Exception ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return tasks;
         }
         NodeList nList = doc.getElementsByTagName("task-summary");
 	for (int i=0; i<nList.getLength(); i++){
@@ -159,8 +158,55 @@ public class REST implements RemoteAPI {
 }
 
     @Override
+    public  List<TaskSummary> getAllTasks() {
+        List<TaskSummary> tasks=new ArrayList<>();
+        URL url;
+        Document doc = null;
+        try {
+            url = new URL("http://localhost:8080/jbpm-console/rest/task/query");
+        
+	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	conn.setRequestMethod("GET");
+	conn.setRequestProperty("Authorization", "Basic " + Base64Util.encode("supertask:supertask"));
+	String response = new BufferedReader(new InputStreamReader((conn.getInputStream()))).readLine();
+         doc =ParseXML(response);
+        }
+        catch (MalformedURLException ex) {
+            Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return tasks;
+        } catch (IOException ex) {
+            Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return tasks;
+        } catch (Exception ex) {
+            Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return tasks;
+        }
+        NodeList nList = doc.getElementsByTagName("task-summary");
+	for (int i=0; i<nList.getLength(); i++){
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:sss");
+            TaskSummary task=new TaskSummary();
+            Element section = (Element) nList.item(i);   
+            task.setStatus(section.getElementsByTagName("status").item(0).getTextContent());
+            task.setTaskId(section.getElementsByTagName("id").item(0).getTextContent());
+            task.setName(section.getElementsByTagName("name").item(0).getTextContent());
+            task.setDescription(section.getElementsByTagName("description").item(0).getTextContent());
+            try {
+                task.setCreateOn(formatter.parse(section.getElementsByTagName("created-on").item(0).getTextContent()));
+            } catch (ParseException ex) {
+                Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            task.setProcessInstance(getProcessInstance(section.getElementsByTagName("process-instance-id").item(0).getTextContent()));
+            task.setParentId(Integer.parseInt(section.getElementsByTagName("parent-id").item(0).getTextContent()));
+     
+          tasks.add(task);
+        }
+        return tasks;
+}
+
+    
+    @Override
     public  List<ProcessInstance> getProcessInstances(User user) {
-        List<ProcessInstance> processInstances=new ArrayList<ProcessInstance>();
+        List<ProcessInstance> processInstances=new ArrayList<>();
         URL url;
         Document doc = null;
         try {
@@ -174,10 +220,13 @@ public class REST implements RemoteAPI {
         }
         catch (MalformedURLException ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return processInstances;
         } catch (IOException ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return processInstances;
         } catch (Exception ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return processInstances;
         }
         NodeList nList = doc.getElementsByTagName("process-instance-log");
 	for (int i=0; i<nList.getLength(); i++){
@@ -295,7 +344,7 @@ public class REST implements RemoteAPI {
     
     @Override
     public  List<ProcessDefinition> getProcessDefinitions(User user) {
-        List<ProcessDefinition> ProcessDefs=new ArrayList<ProcessDefinition>();
+        List<ProcessDefinition> ProcessDefs=new ArrayList<>();
         URL url;
         Document doc = null;
         try {
@@ -309,10 +358,13 @@ public class REST implements RemoteAPI {
         }
         catch (MalformedURLException ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return ProcessDefs;
         } catch (IOException ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return ProcessDefs;
         } catch (Exception ex) {
             Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return ProcessDefs;
         }
         NodeList nList = doc.getElementsByTagName("process-definition");
 	for (int i=0; i<nList.getLength(); i++){
@@ -328,7 +380,37 @@ public class REST implements RemoteAPI {
         }
         return ProcessDefs;
 }
-            
+    
+    @Override
+    public  PotentialOwner getPotentialOwner(String taskId) {
+        URL url;
+        Document doc = null;
+        PotentialOwner owner= new PotentialOwner();
+        try {
+            url = new URL("http://localhost:8080/jbpm-console/rest/task/"+taskId);
+        
+	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	conn.setRequestMethod("GET");
+	conn.setRequestProperty("Authorization", "Basic " + Base64Util.encode("admin:admin"));
+	String response = new BufferedReader(new InputStreamReader((conn.getInputStream()))).readLine();
+        String id=getXPathValue(response,"/task/people-assignments/potential-owners/id");
+        String type=getXPathValue(response,"/task/people-assignments/potential-owners/type");
+        owner.setId(id);
+        owner.setType(type);
+        }
+        catch (MalformedURLException ex) {
+            Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return owner;
+        } catch (IOException ex) {
+            Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return owner;
+        } catch (Exception ex) {
+            Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
+            return owner;
+        }
+        return owner;
+    }
+     
     @Override
     public boolean claimTask(User user,String id) {
         URL url;
@@ -412,7 +494,7 @@ public class REST implements RemoteAPI {
         Document doc = null;
         try {
           if (processDef.getId().equals("hiring"))
-            url = new URL("http://localhost:8080/jbpm-console/rest/runtime/"+processDef.getDeploymentId()+"/process/"+processDef.getId()+"/start?map_name="+param);
+            url = new URL("http://localhost:8080/jbpm-console/rest/runtime/"+processDef.getDeploymentId()+"/process/"+processDef.getId()+"/start?map_name="+URLEncoder.encode(param, "UTF-8"));
            else
             url = new URL("http://localhost:8080/jbpm-console/rest/runtime/"+processDef.getDeploymentId()+"/process/"+processDef.getId()+"/start");
               
@@ -435,10 +517,10 @@ public class REST implements RemoteAPI {
 
            if ( section.getElementsByTagName("status").item(0).getTextContent().equals("SUCCESS"))
           {
-              return 0;
+              return Integer.parseInt(section.getElementsByTagName("id").item(0).getTextContent());
         }
        }
-       catch (Exception e)
+       catch (DOMException e)
        {
        System.out.println("Saipal:"+e);
        }

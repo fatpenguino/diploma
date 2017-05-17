@@ -6,13 +6,18 @@
 package servlets;
 
 import beans.RemoteAPI;
+import beans.SendMail;
+import beans.SendMailPO;
+import beans.UserRemote;
 import entities.ProcessDefinition;
 import entities.ProcessInstance;
 import entities.User;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -27,7 +32,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "ProcessServlet", urlPatterns = {"/ProcessServlet"})
 public class ProcessServlet extends HttpServlet {
-
+    @EJB
+    UserRemote userBean;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -50,7 +56,16 @@ public class ProcessServlet extends HttpServlet {
         String processid=request.getParameter("processid");
         ProcessDefinition pd= api.getProcessDefinition(processid);
         int result= api.startProcess(user, pd, param);
-        //api.send(user.getEmail(), "You startet new process","Title of process is"+pd.getName());
+        if (result!=-1)
+        {
+           Runnable r= new SendMail(user.getEmail(),"You have been Started new process", "Title of process is"+ pd.getName());
+            new Thread(r).start(); 
+           List<User> users=userBean.getUsers();
+            Runnable r2= new SendMailPO(""+result,"", "There is new available tasks for you",users);
+            new Thread(r2).start(); 
+           
+            
+        }
         response.sendRedirect("processes.jsp?page=create&result="+result);
       
         }

@@ -3,11 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/fatpenguino/Downloads/Jbpm/src/java/servlets/TaskServlet.java</file>
-            <file>file:/C:/Users/fatpenguino/Downloads/Jbpm/web/tasks.jsp</file>
-            <file>file:/C:/Users/fatpenguino/Downloads/Jbpm/src/java/beans/RemoteAPI.java</file>
-            <file>file:/C:/Users/fatpenguino/Downloads/Jbpm/web/track.jsp</file>
-            <file>file:/C:/Users/fatpenguino/Downloads/Jbpm/src/java/api/REST.java</file>
+            <file>file:/C:/Users/fatpenguino/Desktop/diploma/src/java/api/REST.java</file>
+            <file>file:/C:/Users/fatpenguino/Desktop/diploma/src/java/beans/SendMailPO.java</file>
+            <file>file:/C:/Users/fatpenguino/Desktop/diploma/src/java/servlets/ProcessServlet.java</file>
+            <file>file:/C:/Users/fatpenguino/Desktop/diploma/src/java/servlets/TaskServlet.java</file>
         </group>
     </open-files>
 </project-private>

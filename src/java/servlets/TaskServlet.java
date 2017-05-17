@@ -6,11 +6,14 @@
 package servlets;
 
 import beans.RemoteAPI;
+import beans.SendMail;
+import beans.UserRemote;
 import entities.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -25,16 +28,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "TaskServlet", urlPatterns = {"/task"})
 public class TaskServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+@EJB
+UserRemote bean;
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
@@ -42,20 +37,27 @@ public class TaskServlet extends HttpServlet {
         RemoteAPI api= (RemoteAPI)ctx.lookup("rest");
         User user=(User)request.getSession().getAttribute("user");
         String action = request.getParameter("act");
-        
+        String email="";
         switch (action) {
             case "claim":
                 api.claimTask(user, request.getParameter("id"));
-                //api.send(user.getEmail(), "You startet new process","Title of process is"+pd.getName());
+                email = bean.getUserByLogin(request.getParameter("login")).getEmail();
+                Runnable claim= new SendMail(email,"Your task: "+ request.getParameter("id")+" was claimed by "+user.getName()+" "+user.getSurname(),"Task status changed");
+                new Thread(claim).start(); 
                 response.sendRedirect("tasks.jsp?&result="+0);
                 break;
             case "start":
                 api.startTask(user, request.getParameter("id"));
-                //api.send(user.getEmail(), "You startet new process","Title of process is"+pd.getName());
+                email = bean.getUserByLogin(request.getParameter("login")).getEmail();
+                Runnable start= new SendMail(email, "Your task: "+ request.getParameter("id")+" was started by "+user.getName()+" "+user.getSurname(),"Task status changed");
+                new Thread(start).start(); 
                 response.sendRedirect("tasks.jsp?sresult=0");
                 break;
             case "complete":
                 api.completeTask(user, request.getParameter("id"));
+                email = bean.getUserByLogin(request.getParameter("login")).getEmail();
+                Runnable complete= new SendMail(email, "Your task: "+ request.getParameter("id")+" was completed by "+user.getName()+" "+user.getSurname(),"Task status changed");
+                new Thread(complete).start(); 
                 response.sendRedirect("tasks.jsp?&result="+0);
                 break;
             default:
