@@ -6,6 +6,7 @@
 package entities;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -24,7 +25,8 @@ public class ProcessInstance {
     Date   start;
     Date   end;
     long   duration; 
-
+    List<Uploads> uploads;
+    
     public Date getEnd() {
         return end;
     }
@@ -33,6 +35,14 @@ public class ProcessInstance {
         this.end = end;
     }
 
+    
+    public List<Uploads> getUploads() {
+        return uploads;
+    }
+
+    public void setUploads(List<Uploads> uploads) {
+        this.uploads = uploads;
+    }
     public long getDuration() {
         return duration;
     }

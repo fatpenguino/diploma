@@ -20,20 +20,11 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:include page="header.jsp" />
-<!DOCTYPE html>
-<html>
-      
         <% 
         User u=(User)session.getAttribute("user");
         %>        
    
 
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title><%= u.getName() %> <%= u.getSurname() %> </title>
-    </head>
-    <body>
-    
         <% 
             InitialContext ctx = new InitialContext();
             RemoteAPI api= (RemoteAPI)ctx.lookup("rest");
@@ -52,13 +43,14 @@
                           
 %>
     
-<div class="occasions">
-    <h2> Tasks </h2>
+<div class="occasions container">
 
+    <h2> Tasks </h2>
+    
     <div class="col-md-3">
         <div class="tasks_for_hr">
-            <h3>Tasks for HR:</h3>
-            <a href="tasks.jsp?sort=potential" class="col-md-12">
+            <h3>Tasks for <%=u.getGroups()%>:</h3>
+            <a href="tasks?sort=potential" class="col-md-12">
                 <div class="number">
                     <span><%=tasks.size()%></span>
                 </div>
@@ -69,13 +61,13 @@
     <div class="col-md-3">
         <div class="tasks_for_me">
             <h3>Tasks for me: <%=formeReady+formeinProgress %> </h3>
-            <a href="tasks.jsp?sort=reserved" class="col-md-6 not_accepted">
+            <a href="tasks?sort=reserved" class="col-md-6 not_accepted">
                 <div class="number">
                     <span><%=formeReady %></span>
                 </div>
                 <p>Ready</p>
             </a>
-            <a href="tasks.jsp?sort=inprogress" class="col-md-6">
+            <a href="tasks?sort=inprogress" class="col-md-6">
                 <div class="number overdue">
                     <span><%=formeinProgress %></span>
                 </div>
@@ -87,7 +79,7 @@
     <div class="col-md-3">
         <div class="history">
             <h3>Task history:</h3>
-            <a href="tasks.jsp?sort=completed" class="col-md-12">
+            <a href="taskhistory" class="col-md-12">
                 <div class="number">
                     <span><%=task4me.size()-formeinProgress-formeReady%></span>
                 </div>
@@ -102,9 +94,6 @@
         </div>
     </div>
 
-    <div class="col-md-3"></div>
-    <div class="col-md-3"></div>
 </div>
 
-    </body>
-</html>
+<jsp:include page="footer.jsp" />

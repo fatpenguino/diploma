@@ -32,11 +32,21 @@ public class User implements Serializable {
     private String password;
     private String email;
     private String Groups;
-    
-    
+    private boolean Boss;
+    @OneToMany(mappedBy="user")
+    private List<Comment> comments;
     public Long getId() {
         return id;
     }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
 
     public void setId(Long id) {
         this.id = id;
@@ -62,6 +72,7 @@ public class User implements Serializable {
         return Groups;
     }
 
+    
     
 
     public String getLogin() {
@@ -91,6 +102,14 @@ public class User implements Serializable {
 
     public void setGroups(String Group) {
         this.Groups = Group;
+    }
+
+    public boolean isBoss() {
+        return Boss;
+    }
+
+    public void setBoss(boolean isBoss) {
+        this.Boss = isBoss;
     }
 
 

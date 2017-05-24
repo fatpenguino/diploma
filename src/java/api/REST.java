@@ -10,8 +10,7 @@ package api;
  * @author fatpenguino
  */
 import beans.RemoteAPI;
-import beans.SendMailPO;
-import beans.UserCRUD;
+import beans.UserRemote;
 import entities.PotentialOwner;
 import entities.ProcessDefinition;
 import entities.ProcessInstance;
@@ -25,15 +24,12 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
@@ -51,14 +47,16 @@ import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.InputSource;
 import java.util.Properties;    
+import javax.ejb.EJB;
 import javax.mail.*;    
 import javax.mail.internet.*; 
 import org.w3c.dom.DOMException;
 @Stateless(mappedName = "rest")
 public class REST implements RemoteAPI {
-
+    @EJB
+    UserRemote userBean;
     public static void main(String[] args) throws Exception {
-    
+  
     }
 	
     @Override
@@ -94,6 +92,7 @@ public class REST implements RemoteAPI {
 	    task.setStatus(section.getElementsByTagName("status").item(0).getTextContent());
             task.setTaskId(section.getElementsByTagName("id").item(0).getTextContent());
             task.setName(section.getElementsByTagName("name").item(0).getTextContent());
+            task.setComments(userBean.getComments(section.getElementsByTagName("id").item(0).getTextContent()));
             task.setDescription(section.getElementsByTagName("description").item(0).getTextContent());
             try {
                 task.setCreateOn(formatter.parse(section.getElementsByTagName("created-on").item(0).getTextContent()));
@@ -148,6 +147,7 @@ public class REST implements RemoteAPI {
             } catch (ParseException ex) {
                 Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
             }
+            task.setComments(userBean.getComments(section.getElementsByTagName("id").item(0).getTextContent()));
             task.setActualOwner(section.getElementsByTagName("actual-owner").item(0).getTextContent());
             task.setProcessInstance(getProcessInstance(section.getElementsByTagName("process-instance-id").item(0).getTextContent()));
             task.setParentId(Integer.parseInt(section.getElementsByTagName("parent-id").item(0).getTextContent()));
@@ -195,6 +195,7 @@ public class REST implements RemoteAPI {
             } catch (ParseException ex) {
                 Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
             }
+            task.setComments(userBean.getComments(section.getElementsByTagName("id").item(0).getTextContent()));
             task.setProcessInstance(getProcessInstance(section.getElementsByTagName("process-instance-id").item(0).getTextContent()));
             task.setParentId(Integer.parseInt(section.getElementsByTagName("parent-id").item(0).getTextContent()));
      
@@ -246,7 +247,7 @@ public class REST implements RemoteAPI {
             processInstance.setIdentity(section.getElementsByTagName("identity").item(0).getTextContent());
             processInstance.setParentId(Integer.parseInt(section.getElementsByTagName("parent-process-instance-id").item(0).getTextContent()));
             processInstance.setProcessName(section.getElementsByTagName("process-name").item(0).getTextContent());
-     
+            processInstance.setUploads(userBean.getUploads(section.getElementsByTagName("process-instance-id").item(0).getTextContent()));
           processInstances.add(processInstance);
         }
         return processInstances;
@@ -291,7 +292,7 @@ public class REST implements RemoteAPI {
                processInstance.setIdentity(section.getElementsByTagName("identity").item(0).getTextContent());
                processInstance.setParentId(Integer.parseInt(section.getElementsByTagName("parent-process-instance-id").item(0).getTextContent()));
                processInstance.setProcessName(section.getElementsByTagName("process-name").item(0).getTextContent());
-
+               processInstance.setUploads(userBean.getUploads(section.getElementsByTagName("process-instance-id").item(0).getTextContent()));
              processInstances.add(processInstance);
            }
            

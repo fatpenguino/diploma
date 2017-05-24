@@ -5,13 +5,15 @@
  */
 package beans;
 
+import entities.Comment;
+import entities.Uploads;
 import java.util.List;
 import javax.ejb.Remote;
 import entities.User;
 
 /**
  *
- * @author Serik
+ * @author fatpenguino
  */
 @Remote
 public interface UserRemote {
@@ -22,4 +24,9 @@ public interface UserRemote {
     void removeUser(User u);
     void updateUser(User u);
     User getUserByLogin(String login);
+    List<Comment> getComments(String taskId);
+    void addComment(Comment c);
+    void addUploads(Uploads u);
+    List<Uploads> getUploads(String processId);
+    
 }

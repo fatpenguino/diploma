@@ -6,6 +6,7 @@
 package entities;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -19,6 +20,7 @@ String status;
 Date  createOn;
 String actualOwner;
 ProcessInstance ProcessInstance;
+List<Comment> comments;
 int parentId;
 
     public String getStatus() {
@@ -31,6 +33,14 @@ int parentId;
 
     public Date getCreateOn() {
         return createOn;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 
     public void setCreateOn(Date createOn) {

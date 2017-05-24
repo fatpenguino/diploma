@@ -1,6 +1,8 @@
 
 package beans;
 
+import entities.Comment;
+import entities.Uploads;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -8,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import entities.User;
 import java.util.Arrays;
+import javax.naming.InitialContext;
 import javax.persistence.TypedQuery;
 
 /**
@@ -22,6 +25,18 @@ public class UserCRUD implements UserRemote {
 
     @Override
     public void addUser(User u) {
+        em.persist(u);
+        em.flush();
+    }
+    
+    @Override
+    public void addComment(Comment c) {
+        em.persist(c);
+        em.flush();
+    }
+
+    @Override
+    public void addUploads(Uploads u) {
         em.persist(u);
         em.flush();
     }
@@ -62,6 +77,7 @@ public class UserCRUD implements UserRemote {
         }
         return user;
     }
+
     @Override
     public void removeUser(User u) {
         em.merge(u);
@@ -70,6 +86,7 @@ public class UserCRUD implements UserRemote {
         em.flush();
     }
     
+    @Override
     public void updateUser(User u) {
         em.merge(u);
         em.flush();
@@ -83,8 +100,37 @@ public class UserCRUD implements UserRemote {
        
         return users;
     }
-    
+
+    @Override
+    public List<Comment> getComments(String taskId) {
+        List<Comment> comments=new ArrayList<>();
+        try {
+        TypedQuery<Comment> query = (TypedQuery<Comment>) em.createQuery("SELECT c FROM Comment c where "
+                + "c.taskId = :taskId").setParameter("taskId", Long.parseLong(taskId));
+        comments = query.getResultList();
+        }
+        catch(NumberFormatException e){
+        comments=null;    
+        }
+        return comments;
     }
+
+    @Override
+    public List<Uploads> getUploads(String processId) {
+        List<Uploads> uploads=new ArrayList<>();
+        try {
+        TypedQuery<Uploads> query = (TypedQuery<Uploads>) em.createQuery("SELECT u FROM Uploads u where "
+                + "u.processId = :taskId").setParameter("taskId", Long.parseLong(processId));
+        uploads = query.getResultList();
+        }
+        catch(NumberFormatException e){
+        uploads=null;    
+        }
+        return uploads;
+    }
+  }
+
+
 
 
 

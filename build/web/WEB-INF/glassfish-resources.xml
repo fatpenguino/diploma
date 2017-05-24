@@ -10,5 +10,5 @@
         <property name="URL" value="jdbc:postgresql://localhost:5432/jbpm"/>
         <property name="driverClass" value="org.postgresql.Driver"/>
     </jdbc-connection-pool>
-    <jdbc-resource enabled="true" jndi-name="java:app/rest" object-type="user" pool-name="post-gre-sql_jbpm_jbpmPool"/>
+    <jdbc-resource enabled="true" jndi-name="java:app/dipl" object-type="user" pool-name="post-gre-sql_jbpm_jbpmPool"/>
 </resources>

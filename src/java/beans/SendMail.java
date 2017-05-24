@@ -63,48 +63,5 @@ public class SendMail implements Runnable
 
      }
      
-     public void run(String processId) throws NamingException{
-        
-         User admin= new User();
-         admin.setLogin("admin");
-         admin.setPassword("admin");
-         InitialContext ctx = new InitialContext();
-         RemoteAPI api= (RemoteAPI)ctx.lookup("rest");
-         UserCRUD user= (UserCRUD)ctx.lookup("userBean");
-         
-         List<TaskSummary> tasks=api.getTasks(admin);
-         String taskId="-1";
-         for (TaskSummary task :tasks){
-         if (task.getProcessInstance().getId().equals(processId) && task.getStatus().equals("Ready"))
-             taskId=task.getTaskId();
-         }  
-         PotentialOwner owner=new PotentialOwner();
-         owner=api.getPotentialOwner(taskId);
-         for (User u : user.getUsers() ){
-             if (u.getGroups().contains(owner.getId())){
-            Properties props = new Properties();    
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.host", "smtp.gmail.com");
-            props.put("mail.smtp.port", "587");
-             //get Session   
-            Session ses = Session.getInstance(props, new Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication("iitu.bpm", "Diploma322");
-                }
-            });    
-              //compose message    
-              try {    
-               MimeMessage mess = new MimeMessage(ses);    
-               mess.addRecipient(Message.RecipientType.TO,new InternetAddress(u.getEmail()));    
-               mess.setSubject(title);    
-               mess.setText(message);    
-               //send message  
-               Transport.send(mess);    
-               System.out.println("message sent successfully 1");    
-              } catch (MessagingException e) {throw new RuntimeException(e);}    
-             }
-         }   
-     }
-     
+    
 }

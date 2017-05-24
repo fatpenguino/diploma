@@ -22,7 +22,7 @@
             List<ProcessInstance> processInstances=api.getProcessInstances(user);
         for (ProcessInstance processInstance :processInstances)
         {
-            if (processInstance.getStatus()==1)
+            if (processInstance.getStatus()==1 && processInstance.getIdentity().equals(user.getLogin()))
             { 
         %>
                <tr>
@@ -49,6 +49,14 @@
                            </div>
                    
                    </td> 
+                   <td>
+                                    <form action="FileUploadHandler" method="post" enctype="multipart/form-data">
+                                       
+                                        <input type="hidden" name="processId" value="<%=processInstance.getId()%>">
+                                       <input type="file" name="file" />
+                                        <input type="submit" value="upload" />
+                                    </form>
+                    </td>  
                </tr>    
                
         <%}
