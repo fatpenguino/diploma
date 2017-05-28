@@ -4,11 +4,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/fatpenguino/Desktop/diploma/web/profile.jsp</file>
-            <file>file:/C:/Users/fatpenguino/Desktop/diploma/src/java/servlets/FileUploadHandler.java</file>
-            <file>file:/C:/Users/fatpenguino/Desktop/diploma/src/java/api/REST.java</file>
-            <file>file:/C:/Users/fatpenguino/Desktop/diploma/src/java/beans/UserCRUD.java</file>
-            <file>file:/C:/Users/fatpenguino/Desktop/diploma/web/track.jsp</file>
+            <file>file:/C:/Users/fatpenguino/Desktop/diploma/web/create.jsp</file>
+            <file>file:/C:/Users/fatpenguino/Desktop/diploma/web/header.jsp</file>
+            <file>file:/C:/Users/fatpenguino/Desktop/diploma/src/java/entities/User.java</file>
+            <file>file:/C:/Users/fatpenguino/Desktop/diploma/web/footer.jsp</file>
             <file>file:/C:/Users/fatpenguino/Desktop/diploma/web/tasks.jsp</file>
+            <file>file:/C:/Users/fatpenguino/Desktop/diploma/src/java/servlets/TaskServlet.java</file>
         </group>
     </open-files>
 </project-private>

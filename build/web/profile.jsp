@@ -45,12 +45,12 @@
     
 <div class="occasions container">
 
-    <h2> Tasks </h2>
+    <h2 style="margin-left: 15px;"> Tasks </h2>
     
-    <div class="col-md-3">
+    <div class="col-md-3 mtb">
         <div class="tasks_for_hr">
             <h3>Tasks for <%=u.getGroups()%>:</h3>
-            <a href="tasks?sort=potential" class="col-md-12">
+            <a href="tasks?sort=ready" class="col-md-12">
                 <div class="number">
                     <span><%=tasks.size()%></span>
                 </div>
@@ -58,7 +58,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-3 mtb">
         <div class="tasks_for_me">
             <h3>Tasks for me: <%=formeReady+formeinProgress %> </h3>
             <a href="tasks?sort=reserved" class="col-md-6 not_accepted">
@@ -76,7 +76,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-3 mtb">
         <div class="history">
             <h3>Task history:</h3>
             <a href="taskhistory" class="col-md-12">
@@ -89,8 +89,8 @@
 
     <div class="col-md-3">
         <div class="calendar">
-            <h3>Calendar: 27</h3>
-            Thursday
+            <h3>Calendar:</h3>
+            <h4 style="text-align: center;">Thursday, 25 March</h4> 
         </div>
     </div>
 

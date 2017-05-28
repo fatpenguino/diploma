@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 public class TaskServlet extends HttpServlet {
 @EJB
 UserRemote bean;
-
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, NamingException {
         response.setContentType("text/html;charset=UTF-8");
@@ -48,7 +47,7 @@ UserRemote bean;
                 email = bean.getUserByLogin(request.getParameter("login")).getEmail();
                 Runnable claim= new SendMail(email,"Your task: "+ request.getParameter("id")+" was claimed by "+user.getName()+" "+user.getSurname(),"Task status changed");
                 new Thread(claim).start(); 
-                response.sendRedirect("tasks?&result="+0);
+                response.sendRedirect("tasks?sort=reserved");
                 break;
               case "delegate":
                 User under = bean.getUserByLogin(request.getParameter("to"));
@@ -56,21 +55,21 @@ UserRemote bean;
                 email = bean.getUserByLogin(request.getParameter("login")).getEmail();
                 Runnable delegate= new SendMail(email,"Your task: "+ request.getParameter("id")+" was delegated to "+under.getName()+" "+under.getSurname()+", by "+user.getName()+" "+user.getSurname(),"Task status changed");
                 new Thread(delegate).start(); 
-                response.sendRedirect("tasks?&result="+0);
+                response.sendRedirect("tasks?sort=ready");
                 break;    
             case "start":
                 api.startTask(user, request.getParameter("id"));
                 email = bean.getUserByLogin(request.getParameter("login")).getEmail();
                 Runnable start= new SendMail(email, "Your task: "+ request.getParameter("id")+" was started by "+user.getName()+" "+user.getSurname(),"Task status changed");
                 new Thread(start).start(); 
-                response.sendRedirect("tasks?sresult=0");
+                response.sendRedirect("tasks?sort=inprogress");
                 break;
             case "complete":
                 api.completeTask(user, request.getParameter("id"));
                 email = bean.getUserByLogin(request.getParameter("login")).getEmail();
                 Runnable complete= new SendMail(email, "Your task: "+ request.getParameter("id")+" was completed by "+user.getName()+" "+user.getSurname(),"Task status changed");
                 new Thread(complete).start(); 
-                response.sendRedirect("tasks?&result="+0);
+                response.sendRedirect("tasks?sort=ready");
                 break;
             case "addcomment":
                 email = bean.getUserByLogin(request.getParameter("login")).getEmail();
@@ -83,7 +82,7 @@ UserRemote bean;
                 bean.addComment(c);
                 Runnable addcomment= new SendMail(email, "You have new comment",user.getName()+" "+user.getSurname()+" added new comment:" + request.getParameter("text"));
                 new Thread(addcomment).start(); 
-                response.sendRedirect("tasks?&result="+0);
+                response.sendRedirect("tasks?sort=ready");
                 break;
 
             default:

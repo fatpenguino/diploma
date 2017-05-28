@@ -33,7 +33,7 @@ public class User implements Serializable {
     private String email;
     private String Groups;
     private boolean Boss;
-    @OneToMany(mappedBy="user")
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL, mappedBy="user")
     private List<Comment> comments;
     public Long getId() {
         return id;

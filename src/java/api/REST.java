@@ -192,10 +192,11 @@ public class REST implements RemoteAPI {
             task.setDescription(section.getElementsByTagName("description").item(0).getTextContent());
             try {
                 task.setCreateOn(formatter.parse(section.getElementsByTagName("created-on").item(0).getTextContent()));
+            
+            task.setComments(userBean.getComments(section.getElementsByTagName("id").item(0).getTextContent()));
             } catch (ParseException ex) {
                 Logger.getLogger(REST.class.getName()).log(Level.SEVERE, null, ex);
             }
-            task.setComments(userBean.getComments(section.getElementsByTagName("id").item(0).getTextContent()));
             task.setProcessInstance(getProcessInstance(section.getElementsByTagName("process-instance-id").item(0).getTextContent()));
             task.setParentId(Integer.parseInt(section.getElementsByTagName("parent-id").item(0).getTextContent()));
      

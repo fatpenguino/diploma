@@ -1,8 +1,9 @@
+<%@page import="entities.Comment"%>
+<%@page import="entities.Uploads"%>
 <%@page import="beans.UserCRUD"%>
 <%@page import="entities.TaskSummary"%>
 <%@page import="beans.RemoteAPI"%>
 <%@page import="org.kie.api.task.TaskService"%>
-<jsp:include page="header.jsp" />
 <%@page import="java.util.ArrayList"%>
 <%@page import="entities.User"%>
 <%@page import="javax.persistence.Persistence"%>
@@ -12,59 +13,71 @@
 <%@page import="java.util.List"%>
 <%@page import="beans.UserRemote"%>
 <%@page import="javax.naming.InitialContext"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>User List</title>
-    </head>
+<jsp:include page="header.jsp" />
     <div class="container">
         <% 
                     
         User user=(User)session.getAttribute("user");
         List<User> users=(List<User>)request.getAttribute("userlist");
+        String status = (String) request.getAttribute("status");
+        String taskId = (String) request.getAttribute("taskId");
+        
         %> 
-    <body>
-       <%        InitialContext ctx = new InitialContext();
-        %>
-        <h1>Ready:</h1>
-        <table class="table">
-                <tr>
-                    <th>TaskId</th>
-                    <th>Task Name</th>
-                    <th>Task Variable</th>
-                    <th>Process Name</th>
-                    <th>Owner</th>
-                    <th>Action</th>
-                     <%
-                     if (user.isBoss()){
-                     %>
-                    <th>Delegate</th>
-                    <% }%>
-                </tr>
-                
+        
+    <div id="content" class="row" style="margin-top: 30px;">
+    <div class="col-md-3">
+    
+        <ul class="list-group">
+        <h3><%=status%>:</h3>
         <%
-                   RemoteAPI api= (RemoteAPI)ctx.lookup("rest");
-                   List<TaskSummary> tasks=api.getPotentialTasks(user);
+                   List<TaskSummary> tasks=(List<TaskSummary>)request.getAttribute("tasks");
                    for (TaskSummary task :tasks){
         %>
-         
-                <tr>
-                   <td><%=task.getTaskId()%> </td>
-                   <td><%=task.getName()%></td>
-                   <td><%=task.getDescription()%></td>
-                   <td><%=task.getProcessInstance().getProcessName()%></td>
-                   <td><%=task.getProcessInstance().getIdentity()%></td>
-                   <td> <a href="task?act=claim&id=<%=task.getTaskId()%>&login=<%=task.getProcessInstance().getIdentity() %>">Claim</a></td>
+        
+        <li class="list-group-item"><a href="#" onclick="getTask(<%=task.getTaskId() %>)"><%=task.getName()+": "+task.getDescription() %>  </a></li>
+        <% } %>
+        </ul>
+      </div>
+        <div class='col-md-9'>
+            <div id="infoshow" style="margin-top:30px;"><h3>Please choose some task</h3> </div>
+        
         <%
-                if (user.isBoss()){
-        %>           
-                  <td> <input type="button" class="btn" value="Delegate" data-toggle="modal" data-target="#delegate_modal<%=task.getTaskId() %>"></td>
-                            <div class="modal fade" id="delegate_modal<%=task.getTaskId()%>" role="dialog">
-                        <div class="modal-dialog">
-                        <!-- Modal content-->
-                            <div class="modal-content">
+                   
+                   for (TaskSummary task :tasks){
+        %>
+        <div id="task<%=task.getTaskId() %>"  style="display: none; width: 500px;">
+                <h3>Task Details:</h3>
+               <div class="taskdetailsdiv">
+                <p class="taskdetails"> Task Name: </p>  <%=task.getName() %> <br>
+                <p class="taskdetails"> Task Description: </p>  <%=task.getDescription() %> <br>
+                <p class="taskdetails"> Process Name: </p>  <%=task.getProcessInstance().getProcessName() %> <br>
+                <p class="taskdetails"> Process Owner: </p>  <%=task.getProcessInstance().getIdentity() %> <br>
+               </div>
+               <div class="taskdetailsdiv">
+                <p class="taskdetails"> Attachments: </p> 
+                <% for (Uploads upload: task.getProcessInstance().getUploads()){
+                    
+                %>
+                <a href="FileUploadHandler?file=<%=upload.getNamePath()%>"><%=upload.getNamePath()%> </a> 
+                <%
+                } %>
+               </div>
+               <div class="actions">
+                   <% if (task.getStatus().equals("Ready")){ %>
+                <a href="task?act=claim&id=<%=task.getTaskId()%>&login=<%=task.getProcessInstance().getIdentity() %>" class="btn btn-default">Claim</a>
+                <% } %>
+                <% if (task.getStatus().equals("Reserved")){ %>
+                <a href="task?act=start&id=<%=task.getTaskId() %>&login=<%=task.getProcessInstance().getIdentity() %>"class="btn btn-default">Start</a>
+                <% } %>
+                <% if (task.getStatus().equals("InProgress")){ %>
+                <a href="task?act=complete&id=<%=task.getTaskId() %>&login=<%=task.getProcessInstance().getIdentity() %>" class="btn btn-default">Complete</a>   <% } %>
+                    <%
+                            if (user.isBoss() && task.getStatus().equals("Ready")){
+                    %>           
+                <input type="button" class="btn btn-default" value="Delegate" data-toggle="modal" data-target="#delegate_modal<%=task.getTaskId() %>"></td>
+                <div class="modal fade" id="delegate_modal<%=task.getTaskId()%>" role="dialog">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                     <h4 class="modal-title">Delegate task</h4>
@@ -87,108 +100,42 @@
                             </div>
                         </div>
                       </div>
+                    <% } %>                     
 
-                </tr>    
-       
-        <% } }%>
-        </table>
-        
-        <h1>Reserved:</h1>
-        <table class="table">
-            
-                <tr>
-                    <th>TaskId</th>
-                    <th>Task Name</th>
-                    <th>Task Variable</th>
-                    <th>Process Name</th>
-                    <th>Owner</th>
-                    <th>Action</th>
+               </div>
+                    <div class="comments">     
+                    <h4>Comments: </h4>
+                    <ul class="list-group">
+                    <%for (Comment c: task.getComments()){ %>
+                         <%=c.getUser().getName()+" "+c.getUser().getSurname() %>:
+                         <li class="list-group-item">
+                            <%=c.getText()%>
+                        </li>
                     
-                </tr>
-        <%
-            List<TaskSummary> mytasks=api.getTasks(user);
-            for (TaskSummary task :mytasks)
-            {
-              if (task.getStatus().equals("Reserved"))
-              {
-        %>
-               <tr>
-                   <td><%=task.getTaskId()%> </td>
-                   <td><%=task.getName()%></td>
-                   <td><%=task.getDescription()%></td>
-                   <td><%=task.getProcessInstance().getProcessName() %> </td>
-                   <td><%=task.getProcessInstance().getIdentity() %></td>
-                   <td> <a href="task?act=start&id=<%=task.getTaskId() %>&login=<%=task.getProcessInstance().getIdentity() %> ">Start</a></td>
-                    <td> <input type="button" class="btn btn-default" value="Add Comment" data-toggle="modal" data-target="#addcomment_modal<%=task.getTaskId() %>"></td>
-                            <div class="modal fade" id="addcomment_modal<%=task.getTaskId()%>" role="dialog">
-                        <div class="modal-dialog">
-                        <!-- Modal content-->
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Add comment</h4>
-                                </div>
-                                <div class="modal-body">
+                    <% } %>                     
+                    </ul>
                                     <form action="task" method="post">
-                                          Text:
-                                          <textarea  name="text">   </textarea>
+                                          Add Comment: <br>
+                                         <textarea class="form-control" rows="3" name="text"></textarea> 
                                          <input type="hidden" name="act" value="addcomment">
                                          <input type="hidden" name="userid" value="<%=user.getId() %>">
                                          <input type="hidden" name="taskid" value="<%=task.getTaskId() %>">
                                          <input type="hidden" name="login" value="<%=task.getProcessInstance().getIdentity() %>">
-                                         <div class="modal-footer">
+                                         <br>
                                          <input type="submit" value="Add" class="btn btn-default"  id="submit_button" success_or_not="0">
-                                         </div>
                                     </form>
-                                </div>
-                            </div>
-                        </div>
-                      </div>
-
-               </tr>    
-        
-        <%    }
-            }
-        %>    
-        </table>
-        
-        
-        <h1>In Progress:</h1>
-        <table class="table">
-            
-                <tr>
-                    <th>TaskId</th>
-                    <th>Task Name</th>
-                    <th>Task Variable</th>
-                    <th>Process Name</th>
-                    <th>Owner</th>
-                    <th>Action</th>
-                </tr>
-        <%
-            List<TaskSummary> inprogress=api.getTasks(user);
-            for (TaskSummary task :inprogress)
-            {
-              if (task.getStatus().equals("InProgress"))
-              {
-        %>
-               <tr>
-                   <td><%=task.getTaskId()%> </td>
-                   <td><%=task.getName()%></td>
-                   <td><%=task.getDescription()%></td>
-                   <td><%=task.getProcessInstance().getProcessName() %> </td>
-                   <td><%=task.getProcessInstance().getIdentity() %></td>
-                   <td> <a href="task?act=complete&id=<%=task.getTaskId() %>&login=<%=task.getProcessInstance().getIdentity() %> ">Complete</a></td>
-                   
-               </tr>    
-        
-        <%    }
-            }
-        %>    
-        </table>
-    
-    </body>
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/comm.js"></script>
-
-</html>
+                    </div>
+            </div>
+        <% } %>
+        </div>
+    </div>
+    </div>                     
+         
+     <script>
+function getTask(id) {
+    document.getElementById("infoshow").style.display = "none";
+   document.getElementById("task"+id).style.display = "inline-block";
+}   
+</script>  
+<jsp:include page="footer.jsp" />
+  

@@ -16,13 +16,19 @@
 <div class="container"> 
         <h1>Available Processes:</h1>
         <table class="table">
+            <th>Process Id</th>
+            <th>Process Name</th>
+            <th>Process Details</th>
+            <th>Action</th>
+            
         <%
             User user=(User)session.getAttribute("user");
             InitialContext ctx = new InitialContext();
             RemoteAPI api= (RemoteAPI)ctx.lookup("rest");
                    List<ProcessDefinition> processdefs=api.getProcessDefinitions(user);
                    for (ProcessDefinition processdef :processdefs){
-        
+                   processdef.setId(processdef.getId().replace("guvnor-asset-management.",""));
+                   processdef.setDeploymentId(processdef.getDeploymentId().replace("org.guvnor:guvnor-asset-mgmt-project:6.3.0.Final", "Template"));
         %>
                <tr>
                    <td><%=processdef.getId() %></td>

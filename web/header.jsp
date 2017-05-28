@@ -1,6 +1,6 @@
 <%@page import="entities.User"%>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
 
@@ -14,8 +14,8 @@
 
     <!-- Bootstrap Core CSS -->
     
-    <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/saipal.css" rel="stylesheet">
+    <link href="css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom CSS -->
 
@@ -38,8 +38,30 @@
     footer {
         margin-top: 300px;
     }
+    .info {
+    color: white !important;
+    font-size: 16px;
+    text-transform: uppercase;
+    display: inline-block;
+    }
     
+    .span2{
+        display: inline-block;
+    }
+    .span8{
+        display: inline-block;
+    }
+    .taskdetails {
+        display: inline-block;
+        
+    }
+    .taskdetailsdiv {
+        display: inline-block;
+    }
     
+    .mtb {
+        margin-bottom: 20px;
+    }
     
 </style>
 
@@ -65,24 +87,36 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a href="profile.jsp">Tasks</a></li>
+                    <li><a href="profile.jsp">HOME</a></li>
                     <li class="dropdown">
                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Processes <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="processes.jsp?page=track">My Processes</a></li>
-                            <li><a href="processes.jsp?page=create">Create Process</a></li>
+                            <li><a href="processes.jsp?page=track">MY PROCESSES</a></li>
+                            <li><a href="processes.jsp?page=create">RUN PROCESS</a></li>
                         </ul>
                    </li>
+                        <li class="dropdown">
+                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Tasks <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="tasks?sort=ready">AVAILABLE</a></li>
+                                <li><a href="tasks?sort=reserved">RESERVED</a></li>
+                                <li><a href="tasks?sort=inprogress">IN PROGRESS</a></li>
+                                <li><a href="taskhistory">HISTORY</a></li>
+                            </ul>
+                       </li>
                 </ul>
            <form class="navbar-form navbar-left">
                 <div class="form-group">
                   <input type="text" class="form-control" placeholder="Search">
                 </div>
             </form>
-            <form class="navbar-form navbar-right" action="user" method="post">
+                <div class=" navbar-right"> 
+                <h4 href="#" class="navbar-text info"><%=user.getName()+" "+user.getSurname() %></h4> 
+            <form class="navbar-form" style="display:inline-block;" action="user" method="post">
                     <input type="submit" value="Logout" class="btn btn-default">
                     <input type="hidden" name="act" value="logout">
             </form>
+                </div>
             </div>
             
             <!-- /.navbar-collapse -->
